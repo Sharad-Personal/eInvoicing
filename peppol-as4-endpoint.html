@@ -256,11 +256,11 @@
 
                 <div class="form-group">
                     <label>URL</label>
-                    <input type="text" value="https://as4.company.com/peppol/receive" disabled>
+                    <input type="text" id="configURL" value="https://as4.company.com/peppol/receive" disabled>
                 </div>
                 <div class="form-group">
                     <label>PEPPOL Participant Name</label>
-                    <input type="text" value="PEPPOL TP1" disabled>
+                    <input type="text" id="configParticipant" value="PEPPOL TP1" disabled>
                 </div>
 
                 <div class="tabs">
@@ -461,19 +461,20 @@
                                 docBox.innerHTML += '✓ ' + d + '<br>';
                             });
                         }
-                        // populate AS4 endpoint URL and partner name if inputs exist
-                        const urlInput = document.querySelector('#screen3 input[type="text"]');
+                        // populate AS4 endpoint URL and participant into explicit fields
+                        const urlInput = document.getElementById('configURL');
                         if (urlInput) {
-                            // find the URL input (first text input in screen3 is URL)
                             urlInput.value = smp.as4Endpoint || urlInput.value;
                             urlInput.removeAttribute('disabled');
                         }
-                        const partnerInput = Array.from(document.querySelectorAll('#screen3 input[type="text"]'))[1];
+                        const partnerInput = document.getElementById('configParticipant');
                         if (partnerInput) {
                             partnerInput.value = smp.participantId || partnerInput.value;
                             partnerInput.removeAttribute('disabled');
                         }
 
+                        // ensure Trading Partner Name matches the Name entered on screen1
+                        if (cfgNameEl && endNameEl) cfgNameEl.value = endNameEl.value.trim();
                         // navigate to screen 3
                         document.getElementById('screen2').classList.remove('active');
                         document.getElementById('screen3').classList.add('active');
@@ -578,6 +579,20 @@
                     currentScreen = 1;
                 }
             }
+
+            // Keep Trading Partner Name in screen3 synchronized with the endpoint Name
+            (function bindConfigNameSync(){
+                const epName = document.getElementById('endpointName');
+                const cfgName = document.getElementById('configName');
+                if (!epName || !cfgName) return;
+                // initialize
+                cfgName.value = epName.value || cfgName.value || '';
+                // keep in sync while user types on screen1
+                epName.addEventListener('input', function(){
+                    // only auto-copy when config name is empty or equals a previous auto value
+                    cfgName.value = this.value;
+                });
+            })();
         </script>
     </body>
     </html>
