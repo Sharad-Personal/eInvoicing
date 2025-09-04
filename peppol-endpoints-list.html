@@ -221,19 +221,19 @@
 
       setTimeout(()=>{
   // simulate discovery/upsert from SML and populate fields
-  e.name = e.name + '_updated';
+  // Do NOT change the Trading Partner / endpoint name during SML update
   e.smp = (e.smp || '') + '_updated';
-  e.tp = (e.tp || '') + '_updated';
   e.as4 = (e.as4 || 'MyTP') + '_updated';
   e.participant = (e.participant || 'PEPPOL TP1') + '_updated';
+  // also update the endpoint URL (do not overwrite trading partner name)
+  e.url = (e.url || 'https://as4.company.com/peppol/receive') + '_updated';
   e.supportedDocs = (e.supportedDocs || ['PEPPOL BIS Billing 3.0']).map(d=> d + '_updated');
   e.modified = new Date().toISOString().slice(0,10);
-  // update UI fields in detail screen
-  const nameEl = document.getElementById('detailName'); if (nameEl) nameEl.value = e.name;
+  // update UI fields in detail screen (do not touch Trading Partner Name)
   const smpEl = document.getElementById('detailSmp'); if (smpEl) smpEl.value = e.smp;
-  const tpEl = document.getElementById('detailTP'); if (tpEl) tpEl.value = e.tp;
   const as4El = document.getElementById('detailAS4'); if (as4El) as4El.value = e.as4;
   const partEl = document.getElementById('detailParticipant'); if (partEl) partEl.value = e.participant;
+  const urlEl = document.getElementById('detailURL'); if (urlEl) urlEl.value = e.url;
   const docsBox = document.getElementById('detailDocsBox'); if (docsBox) { docsBox.innerHTML = ''; e.supportedDocs.forEach(d=> docsBox.innerHTML += '✓ '+d+'<br>'); }
   document.getElementById('updateBtn').disabled = false;
   document.getElementById('updateLoader').style.display='none';
